@@ -22,6 +22,7 @@ class text_data():
         self._updata_flow()
 
     def _updata_flow(self):
+        #todo:可能会有一些离群点需要清洗。
         week_flow = collections.defaultdict(int)
         hour_flow = collections.defaultdict(int)
         for people in self.people_data:
