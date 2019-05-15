@@ -2,9 +2,7 @@ import os
 import collections
 from datetime import datetime
 import json
-import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
 import logging
 
 
