@@ -1,3 +1,4 @@
 {
-  "input_raw_train": ""
+  "input_raw_train": "D:\\programing_data\\train\\people_flow",
+  "train_batch_size": 2
 }

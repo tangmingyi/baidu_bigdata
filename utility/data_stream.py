@@ -96,8 +96,8 @@ class from_text_get_data():
         for file_name in file_name_list:
             file_name_data = file_name[:-4]
             temp = file_name_data.split("_")
-            picture_id = int(temp[0])
-            label = int(temp[1])
+            picture_id = temp[0]
+            label = temp[1]
             file_name = os.path.join(file_base, file_name)
             people_list = []
             with open(file_name, "r", encoding="utf-8") as rf:
@@ -122,9 +122,10 @@ class text_data_writer():
         self.data_genrater = from_text_get_data.get_all_picture_people_data(file_base,show_view=False)
         self.wf = open(writer_path, "w", encoding="utf-8")
 
+
     def towriter(self):
         for index,data in enumerate(self.data_genrater):
-            if index % 1000 == 0:
+            if index % 100 == 0:
                 logging.info("has precess {}".format(index))
             self.wf.write(json.dumps(
                 {"picture_id":data.picture_id,"label":data.lable,"week_flow": data.flow.week_flow, "hour_flow": data.flow.hour_flow, "data_flow": data.flow.data_flow}))
