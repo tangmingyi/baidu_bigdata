@@ -1,4 +1,5 @@
 {
-  "input_raw_train": "D:\\programing_data\\train\\people_flow",
+  "input_raw_train": "/home/tmy/programming_data/baidu_date/train_txt",
+  "input_picture_train":"/home/tmy/programming_data/baidu_date/train_image",
   "train_batch_size": 2
 }

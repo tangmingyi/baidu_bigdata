@@ -89,9 +89,9 @@ class people_data():
 
 class from_text_get_data():
     @staticmethod
-    def get_all_picture_people_data(file_base,show_view=False):
+    def get_all_picture_people_data(file_base,file_name_list,show_view=False):
         "这是一个生成器，用于生成data"
-        file_name_list = os.listdir(file_base)
+        # file_name_list = os.listdir(file_base)
         # all_data_lt = []
         for file_name in file_name_list:
             file_name_data = file_name[:-4]
@@ -118,8 +118,8 @@ class from_text_get_data():
 
 
 class text_data_writer():
-    def __init__(self, file_base, writer_path):
-        self.data_genrater = from_text_get_data.get_all_picture_people_data(file_base,show_view=False)
+    def __init__(self, file_base, writer_path,file_name_list):
+        self.data_genrater = from_text_get_data.get_all_picture_people_data(file_base,file_name_list,show_view=False)
         self.wf = open(writer_path, "w", encoding="utf-8")
 
 

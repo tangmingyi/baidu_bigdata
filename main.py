@@ -9,14 +9,16 @@ config = json.load(open("config/config.json","r",encoding="utf-8"))
 # img = cv2.imread("D:\\programing_data\\train\\picture\\000009_001.jpg")
 def creat_train_reader(pic_file,flow_file):
     def train_reader():
+        sub_path = os.listdir(pic_file)
         with open(flow_file,"r",encoding="utf-8") as rf:
             for line in rf:
                 flow = json.loads(line.strip())
                 pic_name = flow["picture_id"]+"_"+flow["label"]+".jpg"
                 pic_id,pic_label = pic_name.split(".")[0].split("_")
-                path = os.path.join(pic_file,pic_name)
+                path = os.path.join(os.path.join(pic_file,pic_label),pic_name)
                 img = cv2.imread(path)
                 if type(img) == type(None):
+                    print("worry with path:%s"%path)
                     continue
                 # img = np.reshape(img, [3, 100, 100])
                 img = img.flatten()
@@ -25,7 +27,7 @@ def creat_train_reader(pic_file,flow_file):
 # for i in creat_train_reader("D:\\programing_data\\train\\picture","data/temp_data/text_data_flow.txt")():
 #     print(i)
 
-train_reader = paddle.batch(creat_train_reader("D:\\programing_data\\train\\picture","data/temp_data/text_data_flow.txt"),config["train_batch_size"])
+train_reader = paddle.batch(creat_train_reader(config["input_picture_train"],"data/temp_data/text_data_flow.txt"),config["train_batch_size"])
 
 pic_input = fluid.layers.data(name='image',shape=[3,100,100],dtype='float32')
 # flow_input = fluid.layers.data(name='text',shape=[100],dtype='float32')
