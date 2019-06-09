@@ -1,5 +1,8 @@
 {
   "input_raw_train": "/home/tmy/programming_data/baidu_date/train_txt",
   "input_picture_train":"/home/tmy/programming_data/baidu_date/train_image",
-  "train_batch_size": 2
+  "res_net_model":"data/model_data/res_net/v1",
+  "epoch": 2,
+  "save_model_step": 300,
+  "train_batch_size":16
 }

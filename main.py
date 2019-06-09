@@ -2,6 +2,7 @@ import cv2
 from lib.resnet import ResNet152
 import paddle
 from paddle import fluid
+import shutil
 import os
 import json
 import numpy as np
@@ -9,7 +10,6 @@ config = json.load(open("config/config.json","r",encoding="utf-8"))
 # img = cv2.imread("D:\\programing_data\\train\\picture\\000009_001.jpg")
 def creat_train_reader(pic_file,flow_file):
     def train_reader():
-        sub_path = os.listdir(pic_file)
         with open(flow_file,"r",encoding="utf-8") as rf:
             for line in rf:
                 flow = json.loads(line.strip())
@@ -42,13 +42,28 @@ acc=fluid.layers.accuracy(input=pic_tensor,label=label)
 optimizer=fluid.optimizer.AdamOptimizer(learning_rate=1e-3)
 opts=optimizer.minimize(avg_cost)
 place_cpu = fluid.CPUPlace()
-# place_gpu = fluid.CUDAPlace(0)
-exe = fluid.Executor(place=place_cpu)
+place_gpu = fluid.CUDAPlace(0)
+exe = fluid.Executor(place=place_gpu)
 exe.run(fluid.default_startup_program())
+if os.path.exists(config["res_net_model"]):
+    print("初始化模型参数 path：%s"%config["res_net_model"])
+    fluid.io.load_params(executor=exe,dirname=config["res_net_model"])
 feeder = fluid.DataFeeder(place=place_cpu,feed_list=[pic_input,label])
-for index,data in enumerate(train_reader()):
-    loss,myacc = exe.run(program=fluid.default_main_program(),feed=feeder.feed(data),fetch_list=[avg_cost,acc])
-    print("*******")
-    print(loss)
-    print(myacc)
+for i in range(config["epoch"]):
+    print("********")
+    print("epoch %s"%i)
+    for index,data in enumerate(train_reader()):
+        loss,myacc = exe.run(program=fluid.default_main_program(),feed=feeder.feed(data),fetch_list=[avg_cost,acc])
+        if (index+1)%100==0:
+            print("*******")
+            print(loss)
+            print(myacc)
+        if (index+1)%config["save_model_step"]==0:
+        # if index == 10:
+            shutil.rmtree(config["res_net_model"], ignore_errors=True)
+            if not os.path.exists(config["res_net_model"]):
+                os.makedirs(config["res_net_model"])
+            fluid.io.save_params(executor=exe,dirname=config["res_net_model"])
+
+
 
