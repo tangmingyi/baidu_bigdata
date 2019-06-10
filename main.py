@@ -6,10 +6,12 @@ import shutil
 import os
 import json
 from visualdl import LogWriter
+import time
 import numpy as np
 config = json.load(open("config/config.json","r",encoding="utf-8"))
 # img = cv2.imread("D:\\programing_data\\train\\picture\\000009_001.jpg")
-logw = LogWriter(config["log_output"],sync_cycle=10)
+if config["visual"]=="True":
+    logw = LogWriter(config["log_output"],sync_cycle=100)
 def creat_train_reader(pic_file,flow_file):
     def train_reader():
         with open(flow_file,"r",encoding="utf-8") as rf:
@@ -26,8 +28,7 @@ def creat_train_reader(pic_file,flow_file):
                 img = img.flatten()
                 yield (img,int(pic_label)-1)
     return train_reader
-# for i in creat_train_reader("D:\\programing_data\\train\\picture","data/temp_data/text_data_flow.txt")():
-#     print(i)
+
 
 train_reader = paddle.batch(creat_train_reader(config["input_picture_train"],"data/temp_data/text_data_flow.txt"),config["train_batch_size"])
 
@@ -47,41 +48,51 @@ opts=optimizer.minimize(avg_cost)
 place_cpu = fluid.CPUPlace()
 place_gpu = fluid.CUDAPlace(0)
 exe = fluid.Executor(place=place_gpu)
-start_up_program = fluid.default_startup_program()
-temp_vars = start_up_program.global_block().vars
+
 vars_list = []
 log_list = []
 vars_list.append(avg_cost)
 vars_list.append(acc)
-with logw.mode("train") as writer:
-    log_list.append(writer.scalar("loss"))
-    log_list.append(writer.scalar("acc"))
+if config["visual"]=="True":
+    with logw.mode("train") as writer:
+        log_list.append(writer.scalar("loss"))
+        log_list.append(writer.scalar("acc"))
 for k,v in fluid.default_startup_program().global_block().vars.items():
     if k[-7:] == "weights":
         vars_list.append(v)
-        with logw.mode("train") as writer:
-            log_list.append(writer.histogram(v.name,100))
+        if config["visual"] == "True":
+            with logw.mode("train") as writer:
+                log_list.append(writer.histogram(v.name,100))
 exe.run(fluid.default_startup_program())
 if os.path.exists(config["res_net_model"]):
     print("初始化模型参数 path：%s"%config["res_net_model"])
     fluid.io.load_params(executor=exe,dirname=config["res_net_model"])
 
 feeder = fluid.DataFeeder(place=place_cpu,feed_list=[pic_input,label])
+start = 0
+end = 0
+index = 0
 for i in range(config["epoch"]):
     print("********")
     print("epoch %s"%i)
-    for index,data in enumerate(train_reader()):
-        # loss,myacc,output
+    for data in train_reader():
+        if start == 0:
+            start = time.time()
         run_list = exe.run(program=fluid.default_main_program(),feed=feeder.feed(data),fetch_list=vars_list)
-        if (index+1)%100==0:
+        if (index+1)%config["print_every_step"]==0:
             print("*******")
             print("step:%s"%(index+1))
             print(run_list[0])
             print(run_list[1])
-            log_list[0].add_record(index,run_list[0])
-            log_list[1].add_record(index,run_list[1])
-            for num,log in enumerate(log_list[2:]):
-                log.add_record(index,run_list[num+2].flatten())
+            if config["visual"] == "True":
+                log_list[0].add_record(index,run_list[0])
+                log_list[1].add_record(index,run_list[1])
+                for num,log in enumerate(log_list[2:]):
+                    log.add_record(index,run_list[num+2].flatten())
+            end = time.time()
+            print("spent time :%s"%(end-start))
+            start=0
+            end=0
 
 
         if (index+1)%config["save_model_step"]==0:
@@ -90,6 +101,7 @@ for i in range(config["epoch"]):
             if not os.path.exists(config["res_net_model"]):
                 os.makedirs(config["res_net_model"])
             fluid.io.save_params(executor=exe,dirname=config["res_net_model"])
+        index += 1
 
 
 
