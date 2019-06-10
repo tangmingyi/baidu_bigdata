@@ -109,7 +109,7 @@ class ResNet():
             stride=stride,
             padding=(filter_size - 1) // 2,
             groups=groups,
-            act=None,
+            act=act,
             param_attr=ParamAttr(name=name + "_weights"),
             bias_attr=False,
             name=name + '.conv2d.output.1')

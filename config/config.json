@@ -1,8 +1,10 @@
 {
   "input_raw_train": "/home/tmy/programming_data/baidu_date/train_txt",
   "input_picture_train":"/home/tmy/programming_data/baidu_date/train_image",
-  "res_net_model":"data/model_data/res_net/v1",
+  "res_net_model":"data/model_data/res_net/v2",
+  "log_output": "data/model_data/log/res_net/v2",
+  "learning_rate": 5e-6,
   "epoch": 2,
   "save_model_step": 300,
-  "train_batch_size":16
+  "train_batch_size":2
 }
