@@ -118,15 +118,16 @@ class from_text_get_data():
 
 
 class text_data_writer():
-    def __init__(self, file_base, writer_path,file_name_list):
+    def __init__(self, file_base, writer_path,file_name_list,process_id=0):
         self.data_genrater = from_text_get_data.get_all_picture_people_data(file_base,file_name_list,show_view=False)
         self.wf = open(writer_path, "w", encoding="utf-8")
+        self.process_id = process_id
 
 
     def towriter(self):
         for index,data in enumerate(self.data_genrater):
             if index % 100 == 0:
-                logging.info("has precess {}".format(index))
+                logging.info("process[{}] :has precess {}".format(self.process_id,index))
             self.wf.write(json.dumps(
                 {"picture_id":data.picture_id,"label":data.lable,"week_flow": data.flow.week_flow, "hour_flow": data.flow.hour_flow, "data_flow": data.flow.data_flow}))
             self.wf.write("\n")
