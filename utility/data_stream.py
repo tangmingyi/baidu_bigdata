@@ -146,6 +146,7 @@ class text_data_writer():
                      "week_flow": inter_data.flow.week_flow, "hour_flow": inter_data.flow.hour_flow,
                      "data_flow": inter_data.flow.data_flow}))
                 self.wf.write("\n")
+        logging.info("process[{}] :has finsh".format(self.process_id))
 
 
 
