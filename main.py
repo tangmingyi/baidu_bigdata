@@ -1,5 +1,5 @@
 import cv2
-from lib.resnet import ResNet152
+from lib.resnet import ResNet152,ResNet34
 import paddle
 from paddle import fluid
 import shutil
@@ -19,26 +19,32 @@ def creat_train_reader(pic_file,flow_file):
         with open(flow_file,"r",encoding="utf-8") as rf:
             for line in rf:
                 flow = json.loads(line.strip())
-                pic_name = flow["picture_id"]+"_"+flow["label"]+".jpg"
-                pic_id,pic_label = pic_name.split(".")[0].split("_")
+                pic_id = flow["picture_id"]
+                pic_label = flow["label"]
+                pic_name =pic_id+"_"+pic_label+".jpg"
+                # pic_id,pic_label = pic_name.split(".")[0].split("_")
                 path = os.path.join(os.path.join(pic_file,pic_label),pic_name)
                 img = cv2.imread(path)
                 if type(img) == type(None):
                     logging.info("worry with path:%s"%path)
                     continue
                 # img = np.reshape(img, [3, 100, 100])
-                img = img.flatten()
+                img = img.flatten()/255
                 yield (img,int(pic_label)-1)
     return train_reader
 
 
+
 train_reader = paddle.batch(creat_train_reader(config["input_picture_train"],"data/temp_data/text_data_flow.txt"),config["train_batch_size"])
+
+# reader_create = paddle.dataset.cifar.train10()
+# train_reader = paddle.batch(reader_create,config["train_batch_size"])
 
 pic_input = fluid.layers.data(name='image',shape=[3,100,100],dtype='float32')
 # flow_input = fluid.layers.data(name='text',shape=[100],dtype='float32')
 label = fluid.layers.data(name="label",shape=[1],dtype="int64")
 
-pic_res_net = ResNet152()
+pic_res_net = ResNet34()
 pic_tensor = pic_res_net.net(pic_input,9)
 # fina_lay = fluid.layers.fc()
 cost=fluid.layers.softmax_with_cross_entropy(logits=pic_tensor,label=label)
@@ -74,6 +80,8 @@ feeder = fluid.DataFeeder(place=place_cpu,feed_list=[pic_input,label])
 start = 0
 end = 0
 index = 0
+first ="test"
+second = "test"
 for i in range(config["epoch"]):
     logging.info("********")
     logging.info("epoch %s"%i)
@@ -81,6 +89,9 @@ for i in range(config["epoch"]):
         if start == 0:
             start = time.time()
         run_list = exe.run(program=fluid.default_main_program(),feed=feeder.feed(data),fetch_list=vars_list)
+        if config["print_para_change"] == "True":
+            if isinstance(first,str):
+                first = run_list[4]
         if (index+1)%config["print_every_step"]==0:
             logging.info("*******")
             logging.info("step:%s"%(index+1))

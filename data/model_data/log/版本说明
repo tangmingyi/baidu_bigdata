@@ -1,0 +1,17 @@
+v8
+    代码git_id:
+    res_net 34层模型，loss数值在epoch20左右突然下降。
+    配置文件:
+        {
+          "input_raw_train": "/home/tmy/programming_data/baidu_date/train_txt",
+          "input_picture_train":"/home/tmy/programming_data/baidu_date/train_image",
+          "res_net_model":"data/model_data/res_net/v8",
+          "log_output": "data/model_data/log/res_net/v8",
+          "visual": "True",
+          "print_para_change": "Frue",
+          "learning_rate": 1e-3,
+          "epoch": 100,
+          "print_every_step": 100,
+          "save_model_step": 1000,
+          "train_batch_size":32
+        }
