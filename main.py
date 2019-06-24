@@ -34,7 +34,7 @@ def creat_train_reader(pic_file,flow_file):
     return train_reader
 
 
-
+#todo:添加shuffle,paddle.fluid.layers.shuffle（）（与报错，考虑可能是版本问题)
 train_reader = paddle.batch(creat_train_reader(config["input_picture_train"],"data/temp_data/text_data_flow.txt"),config["train_batch_size"])
 
 # reader_create = paddle.dataset.cifar.train10()
