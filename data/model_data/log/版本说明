@@ -1,5 +1,5 @@
 v8
-    代码git_id:
+    代码git_id:abe03006   tag:v8 model
     res_net 34层模型，loss数值在epoch20左右突然下降。
     配置文件:
         {
