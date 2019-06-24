@@ -7,10 +7,9 @@ import os
 import json
 from visualdl import LogWriter
 import time
-import logging
 import numpy as np
 config = json.load(open("config/config.json","r",encoding="utf-8"))
-logging.basicConfig(level=logging.INFO)
+
 # img = cv2.imread("D:\\programing_data\\train\\picture\\000009_001.jpg")
 if config["visual"]=="True":
     logw = LogWriter(config["log_output"],sync_cycle=100)
@@ -26,7 +25,7 @@ def creat_train_reader(pic_file,flow_file):
                 path = os.path.join(os.path.join(pic_file,pic_label),pic_name)
                 img = cv2.imread(path)
                 if type(img) == type(None):
-                    logging.info("worry with path:%s"%path)
+                    print("worry with path:%s"%path)
                     continue
                 # img = np.reshape(img, [3, 100, 100])
                 img = img.flatten()/255
@@ -73,7 +72,7 @@ for k,v in fluid.default_startup_program().global_block().vars.items():
                 log_list.append(writer.histogram(v.name,100))
 exe.run(fluid.default_startup_program())
 if os.path.exists(config["res_net_model"]):
-    logging.info("初始化模型参数 path：%s"%config["res_net_model"])
+    print("初始化模型参数 path：%s"%config["res_net_model"])
     fluid.io.load_params(executor=exe,dirname=config["res_net_model"])
 
 feeder = fluid.DataFeeder(place=place_cpu,feed_list=[pic_input,label])
@@ -83,8 +82,8 @@ index = 0
 first ="test"
 second = "test"
 for i in range(config["epoch"]):
-    logging.info("********")
-    logging.info("epoch %s"%i)
+    print("********")
+    print("epoch %s"%i)
     for data in train_reader():
         if start == 0:
             start = time.time()
@@ -93,17 +92,17 @@ for i in range(config["epoch"]):
             if isinstance(first,str):
                 first = run_list[4]
         if (index+1)%config["print_every_step"]==0:
-            logging.info("*******")
-            logging.info("step:%s"%(index+1))
-            logging.info(run_list[0])
-            logging.info(run_list[1])
+            print("*******")
+            print("step:%s"%(index+1))
+            print(run_list[0])
+            print(run_list[1])
             if config["visual"] == "True":
                 log_list[0].add_record(index,run_list[0])
                 log_list[1].add_record(index,run_list[1])
                 for num,log in enumerate(log_list[2:]):
                     log.add_record(index,run_list[num+2].flatten())
             end = time.time()
-            logging.info("spent time :%s"%(end-start))
+            print("spent time :%s"%(end-start))
             start=0
             end=0
 
