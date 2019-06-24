@@ -1,0 +1,50 @@
+name: paddle
+channels:
+  - defaults
+dependencies:
+  - ca-certificates=2019.1.23=0
+  - certifi=2019.3.9=py36_0
+  - libgcc-ng=8.2.0=hdf63c60_1
+  - openssl=1.0.2s=h7b6447c_0
+  - pip=19.1.1=py36_0
+  - python=3.6.0=0
+  - readline=6.2=2
+  - setuptools=41.0.1=py36_0
+  - sqlite=3.13.0=0
+  - tk=8.5.18=0
+  - wheel=0.33.4=py36_0
+  - xz=5.2.4=h14c3975_4
+  - zlib=1.2.11=h7b6447c_3
+  - pip:
+    - click==7.0
+    - cycler==0.10.0
+    - decorator==4.4.0
+    - flask==1.0.3
+    - funcsigs==1.0.2
+    - itsdangerous==1.1.0
+    - jinja2==2.10.1
+    - kiwisolver==1.1.0
+    - markupsafe==1.1.1
+    - matplotlib==2.2.3
+    - nltk==3.4.3
+    - numpy==1.16.4
+    - opencv-python==4.1.0.25
+    - paddlepaddle-gpu==1.4.1.post97
+    - pillow==6.0.0
+    - prettytable==0.7.2
+    - protobuf==3.8.0
+    - pyparsing==2.4.0
+    - python-dateutil==2.8.0
+    - python-graphviz==0.11
+    - pytz==2019.1
+    - pyyaml==5.1.1
+    - rarfile==3.0
+    - recordio==0.1.7
+    - requests==2.9.2
+    - scipy==1.3.0
+    - six==1.12.0
+    - threadpool==1.3.2
+    - visualdl==1.3.0
+    - werkzeug==0.15.4
+prefix: /home/tmy/anaconda3/envs/paddle
+
